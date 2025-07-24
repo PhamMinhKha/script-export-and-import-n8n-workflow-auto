@@ -14,8 +14,8 @@ UPLOAD_API="https://temp.9tech.dev/upload"
 
 # 🔍 Hàm phát hiện loại cài đặt n8n
 detect_n8n_type() {
-  # Kiểm tra Docker container đang chạy
-  if docker ps --format "table {{.Names}}" 2>/dev/null | grep -q "n8n"; then
+  # Kiểm tra Docker container đang chạy (tìm container chạy image n8nio/n8n)
+  if docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep -q "n8nio/n8n"; then
     echo "docker"
     return
   fi
@@ -43,8 +43,8 @@ execute_n8n_command() {
   
   case "$n8n_type" in
     "docker")
-      # Tìm container n8n đang chạy
-      container_name=$(docker ps --format "table {{.Names}}" 2>/dev/null | grep "n8n" | head -1)
+      # Tìm container n8n đang chạy theo image
+      container_name=$(docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep "n8nio/n8n" | awk '{print $2}' | head -1)
       if [ -n "$container_name" ]; then
         echo "🐳 Sử dụng Docker container: $container_name"
         docker exec "$container_name" $command
@@ -95,7 +95,7 @@ if [ "$choice" = "1" ]; then
 
   if [ "$N8N_TYPE" = "docker" ]; then
     # Với Docker, export trực tiếp vào thư mục đích thông qua volume mount
-    container_name=$(docker ps --format "table {{.Names}}" 2>/dev/null | grep "n8n" | head -1)
+    container_name=$(docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep "n8nio/n8n" | awk '{print $2}' | head -1)
     if [ -n "$container_name" ]; then
       # Tạo thư mục tạm trong container và export
       docker exec "$container_name" mkdir -p /tmp/n8n_export/workflows /tmp/n8n_export/credentials
@@ -156,7 +156,7 @@ elif [ "$choice" = "2" ]; then
   if [ -d "$WORKFLOWS_DIR" ]; then
     echo "📂 Import workflows..."
     if [ "$N8N_TYPE" = "docker" ]; then
-      container_name=$(docker ps --format "table {{.Names}}" 2>/dev/null | grep "n8n" | head -1)
+      container_name=$(docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep "n8nio/n8n" | awk '{print $2}' | head -1)
       if [ -n "$container_name" ]; then
         # Tạo thư mục tạm trong container và copy files
         docker exec "$container_name" mkdir -p /tmp/n8n_import/workflows
@@ -173,7 +173,7 @@ elif [ "$choice" = "2" ]; then
   if [ -d "$CREDENTIALS_DIR" ]; then
     echo "📂 Import credentials..."
     if [ "$N8N_TYPE" = "docker" ]; then
-      container_name=$(docker ps --format "table {{.Names}}" 2>/dev/null | grep "n8n" | head -1)
+      container_name=$(docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep "n8nio/n8n" | awk '{print $2}' | head -1)
       if [ -n "$container_name" ]; then
         # Tạo thư mục tạm trong container và copy files
         docker exec "$container_name" mkdir -p /tmp/n8n_import/credentials
