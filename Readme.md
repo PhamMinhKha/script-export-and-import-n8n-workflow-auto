@@ -16,12 +16,14 @@
 
 ### Chạy trực tiếp từ GitHub (Khuyến nghị)
 
+# Cách 1: Sử dụng curl
 ```bash
-# Phương pháp 1: Sử dụng curl
-curl -fsSL https://raw.githubusercontent.com/PhamMinhKha/script-export-and-import-n8n-workflow-auto/main/backup_n8n_auto.sh | bash
+curl -fsSL https://raw.githubusercontent.com/PhamMinhKha/script-export-and-import-n8n-workflow-auto/main/n8n_backup.sh | bash
+```
+# Cách 2: Sử dụng wget
 
-# Phương pháp 2: Sử dụng wget
-bash <(wget -qO- https://raw.githubusercontent.com/PhamMinhKha/script-export-and-import-n8n-workflow-auto/main/backup_n8n_auto.sh)
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/PhamMinhKha/script-export-and-import-n8n-workflow-auto/main/n8n_backup.sh)
 ```
 
 ### Hoặc clone repository
