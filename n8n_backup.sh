@@ -14,21 +14,21 @@ UPLOAD_API="https://temp.9tech.dev/upload"
 
 # 🔍 Hàm phát hiện loại cài đặt n8n
 detect_n8n_type() {
-  # Ưu tiên 1: Kiểm tra Docker container đang chạy (tìm container chạy image n8nio/n8n)
+  # Ưu tiên 1: Kiểm tra n8n global hoặc npx (phù hợp cho môi trường local)
+  if command -v n8n >/dev/null 2>&1; then
+    echo "npx"
+    return
+  fi
+  
+  # Ưu tiên 2: Kiểm tra Docker container đang chạy (tìm container chạy image n8nio/n8n)
   if docker ps --format "table {{.Image}}\t{{.Names}}" 2>/dev/null | grep -q "n8nio/n8n"; then
     echo "docker"
     return
   fi
   
-  # Ưu tiên 2: Kiểm tra Docker image có tồn tại không (có thể chạy container mới)
+  # Ưu tiên 3: Kiểm tra Docker image có tồn tại không (có thể chạy container mới)
   if docker images --format "table {{.Repository}}" 2>/dev/null | grep -q "n8nio/n8n"; then
     echo "docker"
-    return
-  fi
-  
-  # Ưu tiên 3: Kiểm tra n8n global hoặc npx (chỉ khi không có Docker)
-  if command -v n8n >/dev/null 2>&1; then
-    echo "npx"
     return
   fi
   
